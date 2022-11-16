@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13
+    container_name: postgres13
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=<password>
+      - POSTGRES_USER=joplin
+      - POSTGRES_DB=joplin
+  app:
+    image: joplin/server:latest
+    container_name: joplin
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      - APP_PORT=8080
+      - APP_BASE_URL=http://<url>:8080
+      - DB_CLIENT=pg
+      - POSTGRES_PASSWORD=<password>
+      - POSTGRES_DATABASE=joplin
+      - POSTGRES_USER=joplin
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=db
